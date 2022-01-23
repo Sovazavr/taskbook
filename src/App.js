@@ -4,6 +4,7 @@ import { randomColor } from 'randomcolor'
 import Draggable from 'react-draggable';
 import './App.css';
 
+import './logo.svg'
 
 function App() {
   const [item, setItem] = useState('');
@@ -21,7 +22,7 @@ function App() {
       const newTask = {
         id: uuidv4(),
         item,
-        timeAdd:  new Date().getFullYear()+" "+new Date().getDate()+" "+new Date().toLocaleDateString('default', { month: 'short', weekday: 'short',}) +" "+ new Date().getHours().toLocaleString()+":"+ new Date().getMinutes().toLocaleString(),
+        timeAdd: new Date().getFullYear() + " " + new Date().getDate() + " " + new Date().toLocaleDateString('default', { month: 'short', weekday: 'short', }) + " " + new Date().getHours().toLocaleString() + ":" + new Date().getMinutes().toLocaleString(),
         color: randomColor({
           luminosity: 'light'
         }),
@@ -33,7 +34,6 @@ function App() {
       setItems((items) => [...items, newTask])
       setItem('')
     } else {
-      alert('Заполни инпут мразь')
       setItem('')
     }
   }
@@ -42,41 +42,49 @@ function App() {
     setItems(items.filter((item) => item.id !== id))
   }
 
-  const updatePosition=(data,index)=>{
-    let newArrayItems=[...items]
-    newArrayItems[index].defaultPosition={x:data.x, y:data.y}
+  const updatePosition = (data, index) => {
+    let newArrayItems = [...items]
+    newArrayItems[index].defaultPosition = { x: data.x, y: data.y }
     setItems(newArrayItems)
   }
 
-  const pressEnter=(e)=>{
-    const keyCode= e.keyCode || e.which
-    if(keyCode===13) {
+  const pressShiftEnter = (e) => {
+    const keyCode = e.keyCode || e.which
+    
+    if (keyCode === 13 && e.shiftKey) {
       newItem()
+     
     }
   }
+  
 
   return (
     <div className="App">
-       <div className='wrapper'>
-        <input value={item} className='inputtask' type='text'
-          placeholder='Enter'
-          onChange={(e) => setItem(e.target.value)}
-          onKeyPress={(e)=>pressEnter(e)}></input>
-        <button className='enter' onClick={newItem}>Enter</button>
+      <div className='wrapper'>
+        <div>
+          <form className='in-wrapper'>
+            <input  value={item} className='inputtask' type='text'
+              placeholder='Enter'
+              onChange={(e) => setItem(e.target.value)}
+              onKeyPress={(e) => pressShiftEnter(e)}></input>
+            <button className='enter' onClick={newItem}>Enter</button>
+          </form>
+        </div>
       </div>
       {items.map((item, index) => {
         return (
-          <Draggable key={index} defaultPosition={item.defaultPosition} onStop={(_, data)=>{updatePosition(data, index)}}>
+          <Draggable key={index} defaultPosition={item.defaultPosition} onStop={(_, data) => { updatePosition(data, index) }}>
             <div className='todo' style={{ backgroundColor: item.color }}>
               {`${item.item}`}
+              <hr className='line'></hr>
               <div className='timeAdd'>добавлено: {`${item.timeAdd}`}</div>
               <button className='delete' onClick={() => deleteTask(item.id)}>x</button>
             </div>
 
           </Draggable>
         )
-      })} 
-      
+      })}
+
     </div>
   );
 }
